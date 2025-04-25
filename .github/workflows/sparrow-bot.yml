@@ -57,7 +57,7 @@ jobs:
       - name: Validate PR title
         run: node dist/index.js pr-title
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITBOT_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
@@ -85,6 +85,6 @@ jobs:
       - name: Auto-label
         run: node dist/index.js auto-label
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITBOT_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
           CONTENT: ${{ github.event.issue.body || github.event.pull_request.body }}
