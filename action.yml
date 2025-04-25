@@ -1,0 +1,67 @@
+name: 'Sparrow Bot'
+description: 'GitHub bot for automating repository maintenance tasks'
+author: 'Sparrow'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+  command:
+    description: 'Command to run (stale, pr-title, auto-label, sync-labels)'
+    required: true
+  pr-title:
+    description: 'PR title to validate (for pr-title command)'
+    required: false
+  pr-number:
+    description: 'PR number (for pr-title command)'
+    required: false
+  commit-sha:
+    description: 'Commit SHA (for pr-title command)'
+    required: false
+  issue-number:
+    description: 'Issue/PR number (for auto-label command)'
+    required: false
+  content:
+    description: 'Issue/PR content (for auto-label command)'
+    required: false
+  config-path:
+    description: 'Path to custom configuration file'
+    required: false
+    default: '.github/sparrow-bot.json'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+      shell: bash
+    
+    - name: Install dependencies
+      run: |
+        cd ${{ github.action_path }}
+        npm ci
+      shell: bash
+    
+    - name: Run command
+      run: |
+        cd ${{ github.action_path }}
+        npm run cli ${{ inputs.command }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PR_TITLE: ${{ inputs.pr-title }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        COMMIT_SHA: ${{ inputs.commit-sha }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        CONTENT: ${{ inputs.content }}
+        CONFIG_PATH: ${{ inputs.config-path }}
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'

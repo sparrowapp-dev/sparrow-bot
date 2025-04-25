@@ -1,0 +1,59 @@
+name: Sparrow Bot Action Example
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened]
+  pull_request:
+    types: [opened, edited, synchronize, closed, reopened]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+
+jobs:
+  stale:
+    name: Check for stale issues and PRs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Run Sparrow Bot Stale Check
+        uses: ./  # Use the local action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          command: stale
+  
+  pr-title:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'edited' || github.event.action == 'synchronize')
+    steps:
+      - name: Run Sparrow Bot PR Title Validation
+        uses: ./  # Use the local action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          command: pr-title
+          pr-title: ${{ github.event.pull_request.title }}
+          pr-number: ${{ github.event.pull_request.number }}
+          commit-sha: ${{ github.event.pull_request.head.sha }}
+  
+  auto-label:
+    name: Auto-label issues and PRs
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'issues' && github.event.action == 'opened') || (github.event_name == 'pull_request' && github.event.action == 'opened')
+    steps:
+      - name: Run Sparrow Bot Auto-Label
+        uses: ./  # Use the local action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          command: auto-label
+          issue-number: ${{ github.event.issue.number || github.event.pull_request.number }}
+          content: ${{ github.event.issue.body || github.event.pull_request.body }}
+  
+  sync-labels:
+    name: Sync labels
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Run Sparrow Bot Label Sync
+        uses: ./  # Use the local action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          command: sync-labels
