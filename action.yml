@@ -34,20 +34,21 @@ runs:
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+      shell: bash
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
+      shell: bash
       with:
         node-version: '18'
         cache: 'npm'
-      shell: bash
-    
+
     - name: Install dependencies
       run: |
         cd ${{ github.action_path }}
         npm ci
       shell: bash
-    
+
     - name: Run command
       run: |
         cd ${{ github.action_path }}
