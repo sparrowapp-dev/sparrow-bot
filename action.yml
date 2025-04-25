@@ -4,7 +4,7 @@ author: 'Sparrow'
 
 inputs:
   github-token:
-    description: 'GitHub token for API access'
+    description: 'GitHub token for authentication'
     required: true
   command:
     description: 'Command to run (stale, pr-title, auto-label, sync-labels)'
@@ -19,13 +19,13 @@ inputs:
     description: 'Commit SHA (for pr-title command)'
     required: false
   issue-number:
-    description: 'Issue/PR number (for auto-label command)'
+    description: 'Issue number (for auto-label command)'
     required: false
   content:
-    description: 'Issue/PR content (for auto-label command)'
+    description: 'Content to analyze (for auto-label command)'
     required: false
   config-path:
-    description: 'Path to custom configuration file'
+    description: 'Path to config file'
     required: false
     default: '.github/sparrow-bot.json'
 
