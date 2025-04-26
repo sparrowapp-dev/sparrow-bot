@@ -69,10 +69,32 @@ export interface LabelConfig {
   };
 }
 
+export interface CodeReviewConfig {
+  skipReviewLabel: string;
+  excludePatterns?: string[];
+  includePatterns?: string[];
+  maxFileSize?: number;
+  maxContentSize?: number;
+  confidenceThreshold?: number;
+  maxComments?: number;
+  batchSize?: number;
+  model?: string;
+  maxTokens?: number;
+  customInstructions?: string;
+  createReview?: boolean;
+  reviewHeader?: string;
+  showConfidence?: boolean;
+  addDisclaimer?: boolean;
+  includeOverallFeedback?: boolean;
+  // Azure OpenAI options
+  useAzure?: boolean;
+}
+
 export interface BotConfig {
   stale: StaleConfig;
   prTitle: PRTitleConfig;
   labels: LabelConfig;
+  codeReview: CodeReviewConfig;
 }
 
 const defaultConfig: BotConfig = {
@@ -83,6 +105,36 @@ const defaultConfig: BotConfig = {
     staleLabel: 'stale',
     staleMessage: '🤖 **Sparrow Bot Here!**\n\nThis item has been automatically marked as stale because it hasn\'t had any activity in the last 60 days.\n\n- If this is still relevant, please comment or update it within 7 days.\n- If no activity occurs, this will be automatically closed.\n\nThank you for helping keep our repository organized! 🙏',
     closeMessage: '🤖 **Sparrow Bot Here!**\n\nThis item has been automatically closed due to inactivity.\n\nFeel free to reopen it if you believe it still needs attention.\n\nThank you for your contributions! 🙏',
+  },
+  codeReview: {
+    skipReviewLabel: 'skip-ai-review',
+    excludePatterns: [
+      '\\.md$',
+      '\\.json$',
+      '\\.lock$',
+      'package-lock.json',
+      'yarn.lock',
+      'node_modules/',
+      'dist/',
+      'build/',
+      '\\.min\\.(js|css)$'
+    ],
+    includePatterns: [],
+    maxFileSize: 1000, // Skip files with more than 1000 lines changed
+    maxContentSize: 100000, // Skip files larger than 100KB
+    confidenceThreshold: 60, // Only include suggestions with 60% or higher confidence
+    maxComments: 10, // Limit to 10 comments per PR
+    batchSize: 3, // Process files in batches of 3
+    model: 'gpt-4',
+    maxTokens: 2000,
+    createReview: true, // Create a single review instead of individual comments
+    reviewHeader: '## AI Code Review\n\nI\'ve analyzed this PR and have some suggestions:',
+    showConfidence: true,
+    addDisclaimer: true,
+    includeOverallFeedback: true,
+    customInstructions: 'Focus on security issues, performance improvements, and best practices.',
+    // Azure OpenAI options
+    useAzure: false // Set to true to use Azure OpenAI instead of OpenAI
   },
   prTitle: {
     types: ['feat', 'fix', 'docs', 'style', 'refactor', 'test', 'chore', 'build', 'ci', 'revert'],

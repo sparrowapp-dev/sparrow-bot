@@ -4,6 +4,7 @@ import { loadConfig } from './config/config-loader';
 import { setupStaleManagement } from './features/stale/stale-manager';
 import { setupPRTitleValidation } from './features/pr-title/pr-title-validator';
 import { setupLabelManagement } from './features/labels/label-manager';
+import { setupCodeReviewAssistant } from './features/code-review/code-review-assistant';
 import { logger } from './utils/logger';
 
 // Load environment variables
@@ -25,6 +26,7 @@ async function main() {
     setupStaleManagement(octokit, config.stale);
     setupPRTitleValidation(octokit, config.prTitle);
     setupLabelManagement(octokit, config.labels);
+    setupCodeReviewAssistant(octokit, config.codeReview);
 
     logger.info('Sparrow Bot started successfully');
   } catch (error) {

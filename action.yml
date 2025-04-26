@@ -7,7 +7,7 @@ inputs:
     description: 'GitHub token for authentication'
     required: true
   command:
-    description: 'Command to run (stale, pr-title, auto-label, sync-labels)'
+    description: 'Command to run (stale, pr-title, auto-label, sync-labels, code-review)'
     required: true
   pr-title:
     description: 'PR title to validate (for pr-title command)'

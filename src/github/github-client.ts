@@ -217,4 +217,94 @@ export class GitHubClient {
       return { isFirstTimeContributor: false, isMaintainer: false };
     }
   }
+
+  async getPullRequest(owner: string, repo: string, pullNumber: number) {
+    try {
+      logger.debug(`Fetching PR ${owner}/${repo}#${pullNumber}`);
+      const response = await this.octokit.pulls.get({
+        owner,
+        repo,
+        pull_number: pullNumber,
+      });
+      return response.data;
+    } catch (error) {
+      logger.error(`Failed to fetch PR ${owner}/${repo}#${pullNumber}`, error);
+      throw error;
+    }
+  }
+
+  async getFileContent(owner: string, repo: string, path: string, ref: string) {
+    try {
+      logger.debug(`Fetching file content for ${path} at ${ref}`);
+      const response = await this.octokit.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref,
+      });
+
+      // Handle file content
+      if ('content' in response.data && 'encoding' in response.data) {
+        const content = response.data.encoding === 'base64'
+          ? Buffer.from(response.data.content, 'base64').toString('utf-8')
+          : response.data.content;
+        return content;
+      }
+
+      throw new Error('Not a file or content not available');
+    } catch (error) {
+      logger.error(`Failed to fetch file content for ${path}`, error);
+      return '';
+    }
+  }
+
+  async createReview(owner: string, repo: string, pullNumber: number, options: {
+    body?: string;
+    event: 'APPROVE' | 'REQUEST_CHANGES' | 'COMMENT';
+    comments?: Array<{
+      path: string;
+      position: number;
+      body: string;
+    }>;
+  }) {
+    try {
+      logger.debug(`Creating review for PR ${owner}/${repo}#${pullNumber}`);
+      const response = await this.octokit.pulls.createReview({
+        owner,
+        repo,
+        pull_number: pullNumber,
+        body: options.body,
+        event: options.event,
+        comments: options.comments,
+      });
+      return response.data;
+    } catch (error) {
+      logger.error(`Failed to create review for PR ${owner}/${repo}#${pullNumber}`, error);
+      throw error;
+    }
+  }
+
+  async createReviewComment(owner: string, repo: string, pullNumber: number, options: {
+    body: string;
+    path: string;
+    position: number;
+    commit_id: string;
+  }) {
+    try {
+      logger.debug(`Creating review comment for PR ${owner}/${repo}#${pullNumber}`);
+      const response = await this.octokit.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number: pullNumber,
+        body: options.body,
+        path: options.path,
+        position: options.position,
+        commit_id: options.commit_id,
+      });
+      return response.data;
+    } catch (error) {
+      logger.error(`Failed to create review comment for PR ${owner}/${repo}#${pullNumber}`, error);
+      throw error;
+    }
+  }
 }

@@ -6,6 +6,7 @@ import { loadConfig } from './config/config-loader';
 import { setupStaleManagement } from './features/stale/stale-manager';
 import { setupPRTitleValidation } from './features/pr-title/pr-title-validator';
 import { setupLabelManagement } from './features/labels/label-manager';
+import { setupCodeReviewAssistant } from './features/code-review/code-review-assistant';
 import { logger } from './utils/logger';
 
 // Load environment variables
@@ -16,7 +17,7 @@ async function main() {
     const command = process.argv[2];
 
     if (!command) {
-      console.log('Please provide a command: stale, pr-title, auto-label, sync-labels');
+      console.log('Please provide a command: stale, pr-title, auto-label, sync-labels, code-review');
       process.exit(1);
     }
 
@@ -80,6 +81,19 @@ async function main() {
         logger.info('Syncing labels');
         const syncLabelManager = setupLabelManagement(octokit, config.labels);
         await syncLabelManager.syncLabels(owner, repo);
+        break;
+
+      case 'code-review':
+        logger.info('Reviewing pull request');
+        const reviewPrNumber = parseInt(process.env.PR_NUMBER || '0', 10);
+
+        if (!reviewPrNumber) {
+          logger.error('Missing required environment variables for code review');
+          process.exit(1);
+        }
+
+        const codeReviewAssistant = setupCodeReviewAssistant(octokit, config.codeReview);
+        await codeReviewAssistant.reviewPullRequest(owner, repo, reviewPrNumber);
         break;
 
       default:

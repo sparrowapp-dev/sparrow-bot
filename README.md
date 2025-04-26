@@ -29,6 +29,12 @@
 - Auto-apply labels based on PR/Issue content
 - Support label categories and hierarchies
 
+### 4. AI-Powered Code Review
+- Automatically analyze code changes in PRs
+- Provide intelligent suggestions for improvements
+- Detect potential bugs, security issues, and performance problems
+- Customize review focus and scope
+
 ## 🚀 Getting Started
 
 ### Installation
@@ -73,6 +79,20 @@ jobs:
           pr-title: ${{ github.event.pull_request.title }}
           pr-number: ${{ github.event.pull_request.number }}
           commit-sha: ${{ github.event.pull_request.head.sha }}
+
+  code-review:
+    name: AI Code Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Run Sparrow Bot Code Review
+        uses: sparrowapp-dev/sparrow-bot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          command: code-review
+          pr-number: ${{ github.event.pull_request.number }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 ```
 
 #### As a Node.js Package
@@ -122,6 +142,20 @@ Create a configuration file in your repository at `.github/sparrow-bot.json`:
         }
       ]
     }
+  },
+  "codeReview": {
+    "skipReviewLabel": "skip-ai-review",
+    "excludePatterns": [
+      "\\.md$",
+      "\\.json$",
+      "\\.lock$"
+    ],
+    "maxComments": 10,
+    "model": "gpt-4",
+    "createReview": true,
+    "showConfidence": true,
+    "addDisclaimer": true,
+    "useAzure": false  // Set to true to use Azure OpenAI instead of OpenAI
   }
 }
 ```
@@ -176,6 +210,7 @@ npm run format
 
 - [Configuration](docs/configuration.md)
 - [API Reference](docs/api.md)
+- [Code Review](docs/code-review.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
 
@@ -220,6 +255,28 @@ const result = await prTitleValidator.validatePRTitle(
   'feat(ui): add new button component',
   'commit-sha'
 );
+```
+
+### AI Code Review
+
+```typescript
+import { Octokit } from '@octokit/rest';
+import { setupCodeReviewAssistant } from 'sparrow-bot';
+
+const octokit = new Octokit({ auth: 'your-github-token' });
+const codeReviewAssistant = setupCodeReviewAssistant(octokit, {
+  skipReviewLabel: 'skip-ai-review',
+  excludePatterns: ['\\.md$', '\\.json$'],
+  maxComments: 10,
+  model: 'gpt-4',
+  createReview: true,
+  showConfidence: true,
+  addDisclaimer: true,
+  useAzure: false // Set to true to use Azure OpenAI instead of OpenAI
+});
+
+// Review a pull request
+await codeReviewAssistant.reviewPullRequest('owner', 'repo', 123);
 ```
 
 ## 🤝 Contributing
