@@ -208,9 +208,11 @@ npm run format
 
 ## 📚 Documentation
 
+- [Quick Start Guide](docs/quick-start.md)
 - [Configuration](docs/configuration.md)
 - [API Reference](docs/api.md)
 - [Code Review](docs/code-review.md)
+- [Azure OpenAI Integration](docs/azure-openai-integration.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
 

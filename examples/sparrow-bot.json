@@ -2,37 +2,137 @@
   "stale": {
     "daysBeforeStale": 60,
     "daysBeforeClose": 7,
-    "exemptLabels": ["pinned", "security", "bug"],
+    "exemptLabels": ["pinned", "security", "bug", "enhancement", "help wanted"],
     "staleLabel": "stale",
     "staleMessage": "🤖 **Sparrow Bot Here!**\n\nThis item has been automatically marked as stale because it hasn't had any activity in the last 60 days.\n\n- If this is still relevant, please comment or update it within 7 days.\n- If no activity occurs, this will be automatically closed.\n\nThank you for helping keep our repository organized! 🙏",
     "closeMessage": "🤖 **Sparrow Bot Here!**\n\nThis item has been automatically closed due to inactivity.\n\nFeel free to reopen it if you believe it still needs attention.\n\nThank you for your contributions! 🙏"
   },
   "prTitle": {
-    "types": ["feat", "fix", "docs", "style", "refactor", "test", "chore", "build", "ci", "revert"],
-    "scopes": ["core", "api", "ui", "docs", "deps"],
-    "patterns": ["^(feat|fix|docs|style|refactor|test|chore|build|ci|revert)(\\(\\w+\\))?!?: .+$"]
+    "types": ["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"],
+    "scopes": ["core", "api", "ui", "docs", "deps", "config", "tests"],
+    "patterns": [
+      "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\\(\\w+\\))?!?: .+$"
+    ],
+    "errorMessage": "❌ **PR Title Format Error**\n\nYour PR title doesn't follow our conventional commit format.\n\nPlease use one of the following formats:\n- `type: subject` (e.g., `feat: add new feature`)\n- `type(scope): subject` (e.g., `fix(api): resolve login issue`)\n\nAllowed types: {{types}}\nAllowed scopes: {{scopes}}"
   },
   "labels": {
     "categories": {
       "type": ["feature", "bug", "enhancement", "documentation", "maintenance"],
-      "priority": ["critical", "high", "medium", "low"],
-      "status": ["in-progress", "review-needed", "blocked", "completed"]
+      "priority": ["priority: critical", "priority: high", "priority: medium", "priority: low"],
+      "status": ["status: in-progress", "status: review-needed", "status: blocked", "status: completed"],
+      "size": ["size: small", "size: medium", "size: large", "size: extra-large"],
+      "contributor": ["first-time-contributor", "maintainer"]
     },
     "autoLabeling": {
       "rules": [
         {
           "pattern": "\\bfix(es|ed)?\\b|\\bbug\\b",
-          "labels": ["bug"]
+          "labels": ["bug"],
+          "scope": "both",
+          "priority": 1
         },
         {
           "pattern": "\\bdoc(s|umentation)?\\b",
-          "labels": ["documentation"]
+          "labels": ["documentation"],
+          "scope": "both",
+          "priority": 1
         },
         {
           "pattern": "\\bfeature\\b|\\benhancement\\b",
-          "labels": ["enhancement"]
+          "labels": ["enhancement"],
+          "scope": "both",
+          "priority": 1
+        },
+        {
+          "pattern": "\\bcritical\\b|\\burgent\\b|\\bhigh\\spriority\\b",
+          "labels": ["priority: critical"],
+          "scope": "both",
+          "priority": 2
+        },
+        {
+          "pattern": "\\bsecurity\\b|\\bvulnerability\\b",
+          "labels": ["bug", "priority: critical"],
+          "scope": "both",
+          "priority": 3,
+          "conditions": {
+            "excludeLabels": ["enhancement", "documentation"]
+          }
         }
-      ]
+      ],
+      "fileBased": {
+        "rules": [
+          {
+            "filePatterns": ["\\.md$", "docs/.*"],
+            "labels": ["documentation"]
+          },
+          {
+            "filePatterns": ["\\.tsx?$", "\\.jsx?$"],
+            "labels": ["frontend"]
+          },
+          {
+            "filePatterns": ["\\.css$", "\\.scss$", "\\.less$"],
+            "labels": ["styling"]
+          },
+          {
+            "filePatterns": ["package\\.json", "package-lock\\.json", "yarn\\.lock"],
+            "labels": ["dependencies"]
+          },
+          {
+            "filePatterns": ["\\.github/.*", "workflows/.*"],
+            "labels": ["ci/cd"]
+          }
+        ]
+      },
+      "sizeBased": {
+        "enabled": true,
+        "thresholds": {
+          "small": 10,
+          "medium": 100,
+          "large": 500
+        },
+        "labels": {
+          "small": "size: small",
+          "medium": "size: medium",
+          "large": "size: large",
+          "extraLarge": "size: extra-large"
+        }
+      },
+      "contributorBased": {
+        "enabled": true,
+        "labels": {
+          "firstTimeContributor": "first-time-contributor",
+          "maintainer": "maintainer"
+        }
+      }
     }
+  },
+  "codeReview": {
+    "skipReviewLabel": "skip-ai-review",
+    "excludePatterns": [
+      "\\.md$",
+      "\\.json$",
+      "\\.lock$",
+      "package-lock.json",
+      "yarn.lock",
+      "node_modules/",
+      "dist/",
+      "build/",
+      "\\.min\\.(js|css)$"
+    ],
+    "includePatterns": [],
+    "maxFileSize": 1000,
+    "maxContentSize": 100000,
+    "confidenceThreshold": 60,
+    "maxComments": 10,
+    "batchSize": 3,
+    "model": "gpt-4",
+    "maxTokens": 2000,
+    "createReview": true,
+    "reviewHeader": "## AI Code Review\n\nI've analyzed this PR and have some suggestions:",
+    "showConfidence": true,
+    "addDisclaimer": true,
+    "includeOverallFeedback": true,
+    "customInstructions": "Focus on security issues, performance improvements, and best practices.",
+    "useAzure": false
   }
 }
