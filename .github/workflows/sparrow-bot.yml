@@ -16,24 +16,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Run stale check
         run: node dist/index.js stale
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   pr-title:
     name: Validate PR title
     runs-on: ubuntu-latest
@@ -41,19 +41,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Validate PR title
         run: node dist/index.js pr-title
         env:
@@ -61,7 +61,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-  
+
   auto-label:
     name: Auto-label issues and PRs
     runs-on: ubuntu-latest
@@ -69,22 +69,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Auto-label
         run: node dist/index.js auto-label
         env:
           GITHUB_TOKEN: ${{ secrets.GITBOT_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
           CONTENT: ${{ github.event.issue.body || github.event.pull_request.body }}
+          TITLE: ${{ github.event.issue.title || github.event.pull_request.title }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}

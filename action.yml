@@ -24,6 +24,13 @@ inputs:
   content:
     description: 'Content to analyze (for auto-label command)'
     required: false
+  title:
+    description: 'Title to analyze (for auto-label command)'
+    required: false
+  is-pr:
+    description: 'Whether the item is a PR (for auto-label command)'
+    required: false
+    default: 'false'
   config-path:
     description: 'Path to config file'
     required: false
@@ -59,6 +66,8 @@ runs:
         COMMIT_SHA: ${{ inputs.commit-sha }}
         ISSUE_NUMBER: ${{ inputs.issue-number }}
         CONTENT: ${{ inputs.content }}
+        TITLE: ${{ inputs.title }}
+        IS_PR: ${{ inputs.is-pr }}
         CONFIG_PATH: ${{ inputs.config-path }}
 
 branding:

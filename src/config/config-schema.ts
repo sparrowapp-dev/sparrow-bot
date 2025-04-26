@@ -8,9 +8,9 @@ export const configSchema = {
       properties: {
         daysBeforeStale: { type: 'number', minimum: 1 },
         daysBeforeClose: { type: 'number', minimum: 1 },
-        exemptLabels: { 
-          type: 'array', 
-          items: { type: 'string' } 
+        exemptLabels: {
+          type: 'array',
+          items: { type: 'string' }
         },
         staleLabel: { type: 'string' },
         staleMessage: { type: 'string' },
@@ -21,17 +21,17 @@ export const configSchema = {
       type: 'object',
       required: ['types', 'patterns'],
       properties: {
-        types: { 
-          type: 'array', 
-          items: { type: 'string' } 
+        types: {
+          type: 'array',
+          items: { type: 'string' }
         },
-        scopes: { 
-          type: 'array', 
-          items: { type: 'string' } 
+        scopes: {
+          type: 'array',
+          items: { type: 'string' }
         },
-        patterns: { 
-          type: 'array', 
-          items: { type: 'string' } 
+        patterns: {
+          type: 'array',
+          items: { type: 'string' }
         },
       },
     },
@@ -60,6 +60,97 @@ export const configSchema = {
                   labels: {
                     type: 'array',
                     items: { type: 'string' }
+                  },
+                  scope: {
+                    type: 'string',
+                    enum: ['title', 'body', 'both']
+                  },
+                  priority: { type: 'number' },
+                  conditions: {
+                    type: 'object',
+                    properties: {
+                      filePatterns: {
+                        type: 'array',
+                        items: { type: 'string' }
+                      },
+                      sizeThresholds: {
+                        type: 'object',
+                        properties: {
+                          small: { type: 'number' },
+                          medium: { type: 'number' },
+                          large: { type: 'number' }
+                        }
+                      },
+                      userTypes: {
+                        type: 'object',
+                        properties: {
+                          firstTimeContributor: { type: 'boolean' },
+                          maintainer: { type: 'boolean' }
+                        }
+                      },
+                      excludeLabels: {
+                        type: 'array',
+                        items: { type: 'string' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            fileBased: {
+              type: 'object',
+              properties: {
+                rules: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    required: ['filePatterns', 'labels'],
+                    properties: {
+                      filePatterns: {
+                        type: 'array',
+                        items: { type: 'string' }
+                      },
+                      labels: {
+                        type: 'array',
+                        items: { type: 'string' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            sizeBased: {
+              type: 'object',
+              properties: {
+                enabled: { type: 'boolean' },
+                thresholds: {
+                  type: 'object',
+                  properties: {
+                    small: { type: 'number' },
+                    medium: { type: 'number' },
+                    large: { type: 'number' }
+                  }
+                },
+                labels: {
+                  type: 'object',
+                  properties: {
+                    small: { type: 'string' },
+                    medium: { type: 'string' },
+                    large: { type: 'string' },
+                    extraLarge: { type: 'string' }
+                  }
+                }
+              }
+            },
+            contributorBased: {
+              type: 'object',
+              properties: {
+                enabled: { type: 'boolean' },
+                labels: {
+                  type: 'object',
+                  properties: {
+                    firstTimeContributor: { type: 'string' },
+                    maintainer: { type: 'string' }
                   }
                 }
               }
