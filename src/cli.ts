@@ -92,6 +92,12 @@ async function main() {
           process.exit(1);
         }
 
+        // Check if we should use Azure OpenAI from environment variable
+        if (process.env.SPARROW_USE_AZURE === 'true') {
+          logger.info('Using Azure OpenAI for code review');
+          config.codeReview.useAzure = true;
+        }
+
         const codeReviewAssistant = setupCodeReviewAssistant(octokit, config.codeReview);
         await codeReviewAssistant.reviewPullRequest(owner, repo, reviewPrNumber);
         break;

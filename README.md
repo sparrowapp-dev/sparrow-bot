@@ -91,8 +91,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           command: code-review
           pr-number: ${{ github.event.pull_request.number }}
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # For OpenAI (default)
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          # For Azure OpenAI (uncomment and set use-azure to true)
+          # use-azure: 'true'
+          # azure-openai-api-key: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          # azure-openai-endpoint: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          # azure-openai-deployment: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
 ```
 
 #### As a Node.js Package

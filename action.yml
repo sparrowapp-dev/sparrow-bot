@@ -35,6 +35,22 @@ inputs:
     description: 'Path to config file'
     required: false
     default: '.github/sparrow-bot.json'
+  use-azure:
+    description: 'Whether to use Azure OpenAI instead of OpenAI (for code-review command)'
+    required: false
+    default: 'false'
+  openai-api-key:
+    description: 'OpenAI API key (for code-review command)'
+    required: false
+  azure-openai-api-key:
+    description: 'Azure OpenAI API key (for code-review command with use-azure=true)'
+    required: false
+  azure-openai-endpoint:
+    description: 'Azure OpenAI endpoint URL (for code-review command with use-azure=true)'
+    required: false
+  azure-openai-deployment:
+    description: 'Azure OpenAI deployment name (for code-review command with use-azure=true)'
+    required: false
 
 runs:
   using: 'composite'
@@ -69,6 +85,12 @@ runs:
         TITLE: ${{ inputs.title }}
         IS_PR: ${{ inputs.is-pr }}
         CONFIG_PATH: ${{ inputs.config-path }}
+        # OpenAI and Azure OpenAI settings
+        SPARROW_USE_AZURE: ${{ inputs.use-azure }}
+        OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+        AZURE_OPENAI_API_KEY: ${{ inputs.azure-openai-api-key }}
+        AZURE_OPENAI_ENDPOINT: ${{ inputs.azure-openai-endpoint }}
+        AZURE_OPENAI_DEPLOYMENT: ${{ inputs.azure-openai-deployment }}
 
 branding:
   icon: 'check-circle'
