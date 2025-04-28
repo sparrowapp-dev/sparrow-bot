@@ -8,6 +8,13 @@ on:
   schedule:
     - cron: '0 0 * * *'  # Run daily at midnight UTC
 
+# Default permissions for all jobs
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: write
+
 jobs:
   stale:
     name: Check for stale issues and PRs
