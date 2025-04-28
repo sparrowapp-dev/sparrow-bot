@@ -1,6 +1,6 @@
 import { CodeReviewConfig } from '../../config/config-loader';
 import { logger } from '../../utils/logger';
-import fetch from 'node-fetch';
+// We'll use dynamic import for node-fetch
 
 // Define API provider types
 type ApiProvider = 'openai' | 'azure';
@@ -72,6 +72,9 @@ export async function callOpenAI(
       apiEndpoint = 'https://api.openai.com/v1/chat/completions';
       headers['Authorization'] = `Bearer ${apiKey}`;
     }
+
+    // Dynamically import node-fetch
+    const { default: fetch } = await import('node-fetch');
 
     // Call the AI API
     const response = await fetch(apiEndpoint, {
